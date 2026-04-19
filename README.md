@@ -56,13 +56,13 @@ The model was evaluated on the 2023/2024 season using a 1% value threshold.
 
 
 ## 🔮 Future Improvements
-[ ] Integration of Expected Goals (xG) data for better performance tracking.
+- Integration of Expected Goals (xG) data for better performance tracking.
 
-[ ] Implementing Kelly Criterion for dynamic bet sizing.
+- Implementing Kelly Criterion for dynamic bet sizing.
 
-[ ] Testing non-linear models like XGBoost or LightGBM.
+- Testing non-linear models like XGBoost or LightGBM.
 
-[ ] Inclusion of Market Closing Odds to measure "Beat the Close" performance.
+- Inclusion of Market Closing Odds to measure "Beat the Close" performance.
 
 ## 🚀 How to Run
 1.  **Clone the repository:**
