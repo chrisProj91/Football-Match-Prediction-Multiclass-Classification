@@ -15,28 +15,54 @@ The goal is to predict the probability of the three possible outcomes (H, D, A) 
 ## 📊 Data & Feature Engineering
 The dataset consists of Premier League matches from seasons **2018/19 to 2023/24**, sourced from [football-data.co.uk](https://www.football-data.co.uk/).
 
-### Key Features Engineered
-To ensure the model only uses information available *before* kickoff, I developed the following features:
-* **Form Metrics:** 5-game rolling average of Goals For (GF) and Goals Against (GA) for both Home and Away teams.
-* **Relative Strength:** Calculated Goal Difference (GF - GA) as a proxy for team quality.
-* **Efficiency Signals:** Shot Accuracy (Shots on Target / Total Shots) to capture clinical finishing.
+## 🚀 Key Features
+- **Advanced Feature Engineering**: Utilizes Exponential Moving Averages (EMA) with a span of 5 matches to capture recent team form, ensuring zero data leakage through proper time-shifting.
+- **Rolling Season Training**: Simulates real-world deployment by training on all previous seasons to predict the current one.
+- **Probabilistic Evaluation**: Uses **Log Loss** and **Brier Scores** to measure the quality of the predicted probabilities.
+- **Calibration Analysis**: Includes Reliability Diagrams (Calibration Curves) to detect and visualize model bias.
+- **Value Betting Simulator**: A backtesting engine that calculates ROI and bankroll evolution based on a "Value" strategy against Bet365 odds.
+- **Dark-Theme Visualizations**: High-quality plots for professional presentation.
 
-## 📈 Modeling Strategy
-I utilized **Multinomial Logistic Regression** with an `lbfgs` solver.
+## 📊 Methodology
 
-* **Time-Series Validation:** Used a rolling window approach where all previous seasons were used for training to predict the next single season.
-* **Standardization:** Applied `StandardScaler` fitted only on training data to prevent leakage.
+### 1. Data Pipeline
+Data is fetched from `football-data.co.uk`, covering multiple Premier League seasons (2018-2024). 
+- **Features**: Home/Away Attack Form, Home/Away Defense Form (calculated via EMA).
+- **Target**: Match Result (H: 0, D: 1, A: 2).
 
-## 🧪 Model Evaluation
-Since the objective is probabilistic accuracy rather than just "guessing the winner," the following metrics were used:
+<img width="990" height="590" alt="image" src="https://github.com/user-attachments/assets/f845efee-1f85-4f21-9616-0e9aa099ca17" />
 
-* **Log Loss:** Measures the uncertainty of the predictions. The model achieved a consistent Log Loss between **0.95 and 1.01** across different seasons.
-* **Brier Score:** Evaluated the accuracy of probabilities for each specific class (H, D, A).
-* **Probability Calibration:** Analyzed through calibration curves to determine if a predicted 70% probability actually results in a win 70% of the time.
 
-## 💡 Key Insights & Findings
-* **Model Calibration:** The model is well-calibrated for low-to-mid range probabilities across all outcomes.
-* **Over-optimism in Away Wins:** Evaluation showed that the model tends to overestimate Away wins (Class 'A') at high probability thresholds, suggesting a need for specialized recalibration for away games.
+### 2. The Model
+A **Multinomial Logistic Regression** model is employed to provide well-behaved probability estimates across the three possible outcomes.
+
+### 3. Calibration
+Recognizing that models can be over-confident (especially for Away wins), the project includes an optional **Isotonic Regression** calibration step using `CalibratedClassifierCV`.
+
+<img width="1427" height="948" alt="image" src="https://github.com/user-attachments/assets/1531f81b-f5e7-4b04-b1b5-d7fd16f24938" />
+
+
+## 📈 Performance & Backtesting
+The model was evaluated on the 2023/2024 season using a 1% value threshold.
+
+<img width="986" height="471" alt="image" src="https://github.com/user-attachments/assets/019298c8-feb8-49c4-b75b-273cadba6ec7" />
+
+
+- **Total Bets Placed**: 1,787
+- **ROI**: -4.76%
+- **Final Bankroll**: 95.24 (from initial 100)
+
+*Note: The ROI reflects the difficulty of beating the bookmaker's margin (overround). The stability of the bankroll curve suggests the model effectively captures market dynamics but requires further edge refinement.*
+
+
+## 🔮 Future Improvements
+[ ] Integration of Expected Goals (xG) data for better performance tracking.
+
+[ ] Implementing Kelly Criterion for dynamic bet sizing.
+
+[ ] Testing non-linear models like XGBoost or LightGBM.
+
+[ ] Inclusion of Market Closing Odds to measure "Beat the Close" performance.
 
 ## 🚀 How to Run
 1.  **Clone the repository:**
@@ -49,6 +75,7 @@ Since the objective is probabilistic accuracy rather than just "guessing the win
     ```
 3.  **Run the analysis:**
     Open and run the Jupyter Notebook: `Multiclass_probabilistic_classification_football.ipynb`
+
 
 ---
 *This project was developed as a demonstration of end-to-end Machine Learning workflows, specifically focusing on time-series data and probabilistic evaluation.*
